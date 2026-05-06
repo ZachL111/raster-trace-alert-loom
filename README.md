@@ -1,68 +1,40 @@
 # raster-trace-alert-loom
 
-`raster-trace-alert-loom` packages a practical observability exercise in Scala. The emphasis is on deterministic behavior, a small public API, and examples that explain the tradeoffs.
+`raster-trace-alert-loom` explores observability with a small Scala codebase and local fixtures. The technical goal is to package a Scala local lab for alert analysis with safe and unsafe fixtures, remediation hints, and documented operating limits.
 
-## How I Read Raster Trace Alert Loom
+## Why It Exists
 
-The useful thing to inspect here is how the same score rule is represented in code, metadata, and examples. If those three pieces disagree, the audit script should make the drift visible.
+I want this repository to be useful as a quick reading exercise: fixtures first, implementation second, verifier last.
 
-## Problem Shape
+## Raster Trace Alert Loom Review Notes
 
-This is not a wrapper around a service. It is a self-contained project that shows how the model behaves when demand, capacity, latency, risk, and weight move in different directions.
+For a quick review, compare `latency skew` with `signal loss` before reading the middle cases.
 
-## Internal Model
+## Features
 
-The project is organized around a compact model rather than a large framework. Inputs are scored, classified, and checked against golden fixtures. The constants live in code and are mirrored in metadata so documentation drift is easy to catch. The Scala code uses case classes and a compact object API to keep the test path direct.
+- `fixtures/domain_review.csv` adds cases for span volume and latency skew.
+- `metadata/domain-review.json` records the same cases in structured form.
+- `config/review-profile.json` captures the read order and the two review questions.
+- `examples/raster-trace-alert-walkthrough.md` walks through the case spread.
+- The Scala code includes a review path for `latency skew` and `signal loss`.
+- `docs/field-notes.md` explains the strongest and weakest cases.
 
-## Scenario Walkthrough
+## Architecture Notes
 
-The examples are meant to be readable before they are exhaustive. They cover enough variation to show how latency and risk can pull a decision below the threshold.
+The implementation keeps the scoring rule plain: reward signal and confidence, preserve slack, penalize drag, then classify the result into a review lane.
 
-## Main Behaviors
+The added Scala path is deliberately direct, with fixtures doing most of the explaining.
 
-- Uses fixture data to keep log shape changes visible in code review.
-- Includes extended examples for latency summaries, including `surge` and `degraded`.
-- Documents incident slices tradeoffs in `docs/operations.md`.
-- Runs locally with a single verification command and no external credentials.
-- Stores project constants and verification metadata in `metadata/project.json`.
-
-## Run It Locally
-
-Use a normal shell with Scala available on `PATH`. The verifier is written as a PowerShell script because the portfolio was assembled on Windows.
-
-## Validation
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
-```
-
-The audit command checks repository structure and README constraints before it delegates to the verifier.
-
-## Repository Map
-
-- `src`: primary implementation
-- `tests`: verification harness
-- `fixtures`: compact golden scenarios
-- `examples`: expanded scenario set
-- `metadata`: project constants and verification metadata
-- `docs`: operations and extension notes
-- `scripts`: local verification and audit commands
-
-## Known Edges
-
-The fixture set is deliberately small. That keeps the review surface clear, but it also means the model should not be treated as a complete domain simulator.
-
-## Follow-Up Work
-
-- Add a comparison mode that shows how decisions change when one signal is adjusted.
-- Add a loader for `examples/extended_cases.csv` and promote selected cases into the language test suite.
-- Add a short report command that prints the score breakdown for a single scenario.
-- Add one more observability fixture that focuses on a malformed or borderline input.
-
-## How To Run It
+## Usage
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-This runs the language-level build or test path against the compact fixture set.
+## Tests
+
+That command is also the regression path. It verifies the domain cases and catches mismatches between the CSV, metadata, and code.
+
+## Limitations And Roadmap
+
+The repository is intentionally scoped to local checks. I would expand it by adding adversarial fixtures before adding features.

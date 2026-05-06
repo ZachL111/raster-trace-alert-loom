@@ -1,0 +1,73 @@
+{
+  "repo": "raster-trace-alert-loom",
+  "language": "Scala",
+  "category": "Observability",
+  "goal": "Package a Scala local lab for alert analysis with safe and unsafe fixtures, remediation hints, and documented operating limits.",
+  "review_model": {
+    "terms": [
+      "span volume",
+      "latency skew",
+      "signal loss",
+      "incident shape"
+    ],
+    "lanes": [
+      "ship",
+      "watch",
+      "hold"
+    ],
+    "score": "signal * 2 + slack + confidence - drag * 3",
+    "purpose": "surface the domain-specific cases that need the most careful review"
+  },
+  "cases": [
+    {
+      "name": "baseline",
+      "focus": "span volume",
+      "signal": 78,
+      "slack": 25,
+      "drag": 12,
+      "confidence": 82,
+      "score": 227,
+      "lane": "ship"
+    },
+    {
+      "name": "stress",
+      "focus": "latency skew",
+      "signal": 68,
+      "slack": 48,
+      "drag": 8,
+      "confidence": 91,
+      "score": 251,
+      "lane": "ship"
+    },
+    {
+      "name": "edge",
+      "focus": "signal loss",
+      "signal": 54,
+      "slack": 45,
+      "drag": 19,
+      "confidence": 56,
+      "score": 152,
+      "lane": "ship"
+    },
+    {
+      "name": "recovery",
+      "focus": "incident shape",
+      "signal": 80,
+      "slack": 32,
+      "drag": 25,
+      "confidence": 85,
+      "score": 202,
+      "lane": "ship"
+    },
+    {
+      "name": "stale",
+      "focus": "span volume",
+      "signal": 86,
+      "slack": 33,
+      "drag": 24,
+      "confidence": 80,
+      "score": 213,
+      "lane": "ship"
+    }
+  ]
+}
